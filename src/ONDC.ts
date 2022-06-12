@@ -93,11 +93,11 @@ export default class ONDC {
             "core_version": "<string>",
             "transaction_id": "<string>",
             "message_id": "<string>",
-            "bap_id": "bap.com",
-            "bap_uri": "https://bap.com/beckn",
-            "bpp_id": "bpp.com",
-            "bpp_uri": "https://bpp.com/beckn",
-            "timestamp": "<dateTime>",
+            "bap_id": this.bapId,
+            "bap_uri": this.bapUri,
+            "bpp_id": this.bppId,
+            "bpp_uri": this.bppUri,
+            "timestamp": +new Date(),
             "key": "<string>",
             "ttl": "<string>"
         };
