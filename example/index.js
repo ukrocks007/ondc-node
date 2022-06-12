@@ -6,6 +6,9 @@ const ondc = new ONDC.default.ONDC({
     bapUri: "https://bap.com/beckn",
     bppId: "bpp.com",
     bppUri: "https://bpp.com/beckn",
+    country: "IND",
+    city: "std:080",
+    ttl: "P1M"
 });
 
 const init = async () => {
