@@ -1,56 +1,20 @@
 import request from "request";
 
-async function init(): Promise<any> {
+async function executeRequest(opts: any, context: any, message: any): Promise<any> {
     return new Promise((resolve, reject) => {
-        var options = {
-            'method': 'POST',
-            'url': 'http://localhost:5000/search',
-            'headers': {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Authorization': '<API Key>'
-            },
+        var options: any = {
+            ...opts,
             body: JSON.stringify({
-                "context": {
-                    "domain": "<string>",
-                    "action": "<string>",
-                    "country": "<string>",
-                    "city": "<string>",
-                    "core_version": "<string>",
-                    "transaction_id": "<string>",
-                    "message_id": "<string>",
-                    "bap_id": "bap.com",
-                    "bap_uri": "https://bap.com/beckn",
-                    "bpp_id": "bpp.com",
-                    "bpp_uri": "https://bpp.com/beckn",
-                    "timestamp": "<dateTime>",
-                    "key": "<string>",
-                    "ttl": "<string>"
-                },
-                "message": {
-                    "intent": {
-                        "category": {
-                            "descriptor": {
-                                "name": "Groceries"
-                            }
-                        },
-                        "fulfillment": {
-                            "end": {
-                                "location": {
-                                    "gps": "12.4535445,77.9283792"
-                                }
-                            }
-                        }
-                    }
-                }
+                "context": context,
+                "message": message
             })
 
         };
-        request(options, function (error, response) {
+        request(options, function (error: any, response: any) {
             if (error) reject(error);
-            resolve(response.body);
+            resolve(JSON.parse(response.body));
         });
     });
 }
 
-export default init;
+export default executeRequest;
