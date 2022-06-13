@@ -9,6 +9,7 @@ export type ONDCOptions = {
     ttl?: string,
     country: string,
     city: string,
+    domain?: string,
 }
 
 export type Contact = {

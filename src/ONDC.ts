@@ -13,6 +13,7 @@ export default class ONDC {
     public ttl?: string;
     public country: string;
     public city: string;
+    public domain?: string;
     constructor(opts: ONDCOptions) {
         this.host = opts.host;
         this.apiKey = opts.apiKey || '<API Key>';
@@ -23,6 +24,7 @@ export default class ONDC {
         this.ttl = opts.ttl;
         this.country = opts.country;
         this.city = opts.city;
+        this.domain = opts.domain;
         this.key = opts.encryptionPublicKey;
     }
 
@@ -95,7 +97,7 @@ export default class ONDC {
     }
     getContext(action: string): Context {
         return {
-            "domain": "<string>",
+            "domain": this.domain || "domain",
             "action": action as Action,
             "country": this.country,
             "city": this.city,
