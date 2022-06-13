@@ -1,309 +1,3 @@
-export type ONDCOptions = {
-    host: string,
-    apiKey?: string,
-    bapId: string,
-    bapUri: string,
-    bppId: string,
-    bppUri: string,
-    encryptionPublicKey?: string,
-    ttl?: string,
-    country: string,
-    city: string,
-    domain?: string,
-}
-
-export type Contact = {
-    phone?: string;
-    email?: string;
-    tags?: Tags;
-};
-
-/** @description Codification of domains supported by ONDC */
-export type Domain = string;
-
-/** @description Describes a country. */
-export type Country = {
-    /** @description Name of the country */
-    name?: string;
-    /** @description Country code as per ISO 3166 Alpha-3 code format */
-    code?: string;
-};
-
-/** @description Describes a city */
-export type City = {
-    /** @description Name of the city */
-    name?: string;
-    /** @description Codification of city code will be using the std code of the city e.g. for Bengaluru, city code is 'std:080' */
-    code?: string;
-};
-
-export type Action =
-    | "search"
-    | "select"
-    | "init"
-    | "confirm"
-    | "update"
-    | "status"
-    | "track"
-    | "cancel"
-    | "rating"
-    | "support"
-    | "on_search"
-    | "on_select"
-    | "on_init"
-    | "on_confirm"
-    | "on_update"
-    | "on_status"
-    | "on_track"
-    | "on_cancel"
-    | "on_rating"
-    | "on_support";
-
-/** @description Describes a ONDC message context */
-export type Context = {
-    domain: Domain;
-    country: string;
-    city: string;
-    /**
-     * @description Defines the ONDC API call. Any actions other than the enumerated actions are not supported by ONDC Protocol
-     * @enum {string}
-     */
-    action: Action;
-    /** @description Version of ONDC core API specification being used */
-    core_version: string;
-    /**
-     * Format: uri
-     * @description Unique id of the Buyer App. By default it is the fully qualified domain name of the Buyer App
-     */
-    bap_id: string;
-    /**
-     * Format: uri
-     * @description URI of the Seller App for accepting callbacks. Must have the same domain name as the bap_id
-     */
-    bap_uri: string;
-    /**
-     * Format: uri
-     * @description Unique id of the Seller App. By default it is the fully qualified domain name of the Seller App
-     */
-    bpp_id?: string;
-    /**
-     * Format: uri
-     * @description URI of the Seller App. Must have the same domain name as the bap_id
-     */
-    bpp_uri?: string;
-    /** @description This is a unique value which persists across all API calls from search through confirm */
-    transaction_id: string;
-    /** @description This is a unique value which persists during a request / callback cycle */
-    message_id: string;
-    /**
-     * Format: date-time
-     * @description Time of request generation in RFC3339 format
-     */
-    timestamp: string;
-    /** @description The encryption public key of the sender */
-    key?: string;
-    /** @description The duration in ISO8601 format after timestamp for which this message holds valid. */
-    ttl?: string;
-};
-
-/** @description An object representing a scalar quantity. */
-export type Scalar = {
-    /** @enum {string} */
-    type?: "CONSTANT" | "VARIABLE";
-    value: number;
-    estimated_value?: number;
-    computed_value?: number;
-    range?: {
-        min?: number;
-        max?: number;
-    };
-    unit: string;
-};
-
-/** @description Describes a schedule */
-export type Schedule = {
-    frequency?: Duration;
-    holidays?: string[];
-    times?: string[];
-};
-
-/** @description Describes duration as per ISO8601 format */
-export type Duration = string;
-
-/** @description Describes a state */
-export type State = {
-    descriptor?: Descriptor;
-    /** Format: date-time */
-    updated_at?: string;
-    /** @description ID of entity which changed the state */
-    updated_by?: string;
-};
-
-export type ItemQuantitySub = {
-    count?: number;
-    measure?: Scalar;
-};
-
-/** @description Describes count or amount of an item */
-export type ItemQuantity = {
-    allocated?: ItemQuantitySub;
-    available?: ItemQuantitySub;
-    maximum?: ItemQuantitySub;
-    minimum?: ItemQuantitySub;
-    selected?: ItemQuantitySub;
-};
-
-/** @description Describes a document which can be sent as a url */
-export type Document = {
-    /** Format: uri */
-    url?: string;
-    label?: string;
-};
-
-/** @description Describes an organization */
-export type Organization = {
-    name?: string;
-    cred?: string;
-};
-
-/** @description Describes time in its various forms. It can be a single point in time; duration; or a structured timetable of operations */
-export type Time = {
-    label?: string;
-    /** Format: date-time */
-    timestamp?: string;
-    duration?: Duration;
-    range?: {
-        /** Format: date-time */
-        start?: string;
-        /** Format: date-time */
-        end?: string;
-    };
-    /** @description comma separated values representing days of the week */
-    days?: string;
-    schedule?: Schedule;
-};
-
-/** @description Describes how a single product/service will be rendered/fulfilled to the end customer */
-export type Fulfillment = {
-    /** @description Unique reference ID to the fulfillment of an order */
-    id?: string;
-    /** @description This describes the type of fulfillment */
-    type?: string;
-    provider_id?: string;
-    rating?: number;
-    state?: State;
-    /**
-     * @description Indicates whether the fulfillment allows tracking
-     * @default false
-     */
-    tracking?: boolean;
-    customer?: {
-        person?: Person;
-        contact?: Contact;
-    };
-    agent?: Agent;
-    person?: Person;
-    contact?: Contact;
-    vehicle?: Vehicle;
-    /** @description Details on the start of fulfillment */
-    start?: {
-        location?: Location;
-        time?: Time;
-        instructions?: Descriptor;
-        contact?: Contact;
-        person?: Person;
-        authorization?: Authorization;
-    };
-    /** @description Details on the end of fulfillment */
-    end?: {
-        location?: Location;
-        time?: Time;
-        instructions?: Descriptor;
-        contact?: Contact;
-        person?: Person;
-        authorization?: Authorization;
-    };
-    rateable?: Rateable;
-    tags?: Tags;
-};
-
-/** @description Describes a billing event */
-export type Billing = {
-    /** @description Personal details of the customer needed for billing. */
-    name: string;
-    organization?: Organization;
-    address?: Address;
-    /** Format: email */
-    email?: string;
-    phone: string;
-    time?: Time;
-    tax_number?: string;
-    /** Format: date-time */
-    created_at?: string;
-    /** Format: date-time */
-    updated_at?: string;
-};
-
-/** @description Describes the details of an order */
-export type Order = {
-    /** @description Hash of order object without id */
-    id?: string;
-    state?: string;
-    provider?: {
-        id?: string;
-        locations?: {
-            id: string;
-        }[];
-    };
-    items?: {
-        id: string;
-        quantity?: ItemQuantitySub;
-    }[];
-    add_ons?: {
-        id: string;
-    }[];
-    offers?: {
-        id: string;
-    }[];
-    documents?: Document[];
-    billing?: Billing;
-    fulfillment?: Fulfillment;
-    quote?: Quotation;
-    payment?: Payment;
-    /** Format: date-time */
-    created_at?: string;
-    /** Format: date-time */
-    updated_at?: string;
-};
-
-export type Image = string;
-
-export type Descriptor = {
-    name?: string;
-    code?: string;
-    symbol?: string;
-    short_desc?: string;
-    long_desc?: string;
-    images?: Image[];
-    /** Format: uri */
-    audio?: string;
-    /** Format: uri */
-    "3d_render"?: string;
-};
-
-/** @description Describes the price of an item. Allows for domain extension. */
-export type Price = {
-    /** @description ISO 4217 alphabetic currency code e.g. 'INR' */
-    currency?: string;
-    value?: string;
-    estimated_value?: string;
-    computed_value?: string;
-    listed_value?: string;
-    offered_value?: string;
-    minimum_value?: string;
-    maximum_value?: string;
-};
-
 export interface paths {
     "/search": {
         /** Search for services by intent */
@@ -1207,6 +901,312 @@ export interface paths {
         };
     };
 }
+
+export type ONDCOptions = {
+    host: string,
+    apiKey?: string,
+    bapId: string,
+    bapUri: string,
+    bppId: string,
+    bppUri: string,
+    encryptionPublicKey?: string,
+    ttl?: string,
+    country: string,
+    city: string,
+    domain?: string,
+}
+
+export type Contact = {
+    phone?: string;
+    email?: string;
+    tags?: Tags;
+};
+
+/** @description Codification of domains supported by ONDC */
+export type Domain = string;
+
+/** @description Describes a country. */
+export type Country = {
+    /** @description Name of the country */
+    name?: string;
+    /** @description Country code as per ISO 3166 Alpha-3 code format */
+    code?: string;
+};
+
+/** @description Describes a city */
+export type City = {
+    /** @description Name of the city */
+    name?: string;
+    /** @description Codification of city code will be using the std code of the city e.g. for Bengaluru, city code is 'std:080' */
+    code?: string;
+};
+
+export type Action =
+    | "search"
+    | "select"
+    | "init"
+    | "confirm"
+    | "update"
+    | "status"
+    | "track"
+    | "cancel"
+    | "rating"
+    | "support"
+    | "on_search"
+    | "on_select"
+    | "on_init"
+    | "on_confirm"
+    | "on_update"
+    | "on_status"
+    | "on_track"
+    | "on_cancel"
+    | "on_rating"
+    | "on_support";
+
+/** @description Describes a ONDC message context */
+export type Context = {
+    domain: Domain;
+    country: string;
+    city: string;
+    /**
+     * @description Defines the ONDC API call. Any actions other than the enumerated actions are not supported by ONDC Protocol
+     * @enum {string}
+     */
+    action: Action;
+    /** @description Version of ONDC core API specification being used */
+    core_version: string;
+    /**
+     * Format: uri
+     * @description Unique id of the Buyer App. By default it is the fully qualified domain name of the Buyer App
+     */
+    bap_id: string;
+    /**
+     * Format: uri
+     * @description URI of the Seller App for accepting callbacks. Must have the same domain name as the bap_id
+     */
+    bap_uri: string;
+    /**
+     * Format: uri
+     * @description Unique id of the Seller App. By default it is the fully qualified domain name of the Seller App
+     */
+    bpp_id?: string;
+    /**
+     * Format: uri
+     * @description URI of the Seller App. Must have the same domain name as the bap_id
+     */
+    bpp_uri?: string;
+    /** @description This is a unique value which persists across all API calls from search through confirm */
+    transaction_id: string;
+    /** @description This is a unique value which persists during a request / callback cycle */
+    message_id: string;
+    /**
+     * Format: date-time
+     * @description Time of request generation in RFC3339 format
+     */
+    timestamp: string;
+    /** @description The encryption public key of the sender */
+    key?: string;
+    /** @description The duration in ISO8601 format after timestamp for which this message holds valid. */
+    ttl?: string;
+};
+
+/** @description An object representing a scalar quantity. */
+export type Scalar = {
+    /** @enum {string} */
+    type?: "CONSTANT" | "VARIABLE";
+    value: number;
+    estimated_value?: number;
+    computed_value?: number;
+    range?: {
+        min?: number;
+        max?: number;
+    };
+    unit: string;
+};
+
+/** @description Describes a schedule */
+export type Schedule = {
+    frequency?: Duration;
+    holidays?: string[];
+    times?: string[];
+};
+
+/** @description Describes duration as per ISO8601 format */
+export type Duration = string;
+
+/** @description Describes a state */
+export type State = {
+    descriptor?: Descriptor;
+    /** Format: date-time */
+    updated_at?: string;
+    /** @description ID of entity which changed the state */
+    updated_by?: string;
+};
+
+export type ItemQuantitySub = {
+    count?: number;
+    measure?: Scalar;
+};
+
+/** @description Describes count or amount of an item */
+export type ItemQuantity = {
+    allocated?: ItemQuantitySub;
+    available?: ItemQuantitySub;
+    maximum?: ItemQuantitySub;
+    minimum?: ItemQuantitySub;
+    selected?: ItemQuantitySub;
+};
+
+/** @description Describes a document which can be sent as a url */
+export type Document = {
+    /** Format: uri */
+    url?: string;
+    label?: string;
+};
+
+/** @description Describes an organization */
+export type Organization = {
+    name?: string;
+    cred?: string;
+};
+
+/** @description Describes time in its various forms. It can be a single point in time; duration; or a structured timetable of operations */
+export type Time = {
+    label?: string;
+    /** Format: date-time */
+    timestamp?: string;
+    duration?: Duration;
+    range?: {
+        /** Format: date-time */
+        start?: string;
+        /** Format: date-time */
+        end?: string;
+    };
+    /** @description comma separated values representing days of the week */
+    days?: string;
+    schedule?: Schedule;
+};
+
+/** @description Describes how a single product/service will be rendered/fulfilled to the end customer */
+export type Fulfillment = {
+    /** @description Unique reference ID to the fulfillment of an order */
+    id?: string;
+    /** @description This describes the type of fulfillment */
+    type?: string;
+    provider_id?: string;
+    rating?: number;
+    state?: State;
+    /**
+     * @description Indicates whether the fulfillment allows tracking
+     * @default false
+     */
+    tracking?: boolean;
+    customer?: {
+        person?: Person;
+        contact?: Contact;
+    };
+    agent?: Agent;
+    person?: Person;
+    contact?: Contact;
+    vehicle?: Vehicle;
+    /** @description Details on the start of fulfillment */
+    start?: {
+        location?: Location;
+        time?: Time;
+        instructions?: Descriptor;
+        contact?: Contact;
+        person?: Person;
+        authorization?: Authorization;
+    };
+    /** @description Details on the end of fulfillment */
+    end?: {
+        location?: Location;
+        time?: Time;
+        instructions?: Descriptor;
+        contact?: Contact;
+        person?: Person;
+        authorization?: Authorization;
+    };
+    rateable?: Rateable;
+    tags?: Tags;
+};
+
+/** @description Describes a billing event */
+export type Billing = {
+    /** @description Personal details of the customer needed for billing. */
+    name: string;
+    organization?: Organization;
+    address?: Address;
+    /** Format: email */
+    email?: string;
+    phone: string;
+    time?: Time;
+    tax_number?: string;
+    /** Format: date-time */
+    created_at?: string;
+    /** Format: date-time */
+    updated_at?: string;
+};
+
+/** @description Describes the details of an order */
+export type Order = {
+    /** @description Hash of order object without id */
+    id?: string;
+    state?: string;
+    provider?: {
+        id?: string;
+        locations?: {
+            id: string;
+        }[];
+    };
+    items?: {
+        id: string;
+        quantity?: ItemQuantitySub;
+    }[];
+    add_ons?: {
+        id: string;
+    }[];
+    offers?: {
+        id: string;
+    }[];
+    documents?: Document[];
+    billing?: Billing;
+    fulfillment?: Fulfillment;
+    quote?: Quotation;
+    payment?: Payment;
+    /** Format: date-time */
+    created_at?: string;
+    /** Format: date-time */
+    updated_at?: string;
+};
+
+export type Image = string;
+
+export type Descriptor = {
+    name?: string;
+    code?: string;
+    symbol?: string;
+    short_desc?: string;
+    long_desc?: string;
+    images?: Image[];
+    /** Format: uri */
+    audio?: string;
+    /** Format: uri */
+    "3d_render"?: string;
+};
+
+/** @description Describes the price of an item. Allows for domain extension. */
+export type Price = {
+    /** @description ISO 4217 alphabetic currency code e.g. 'INR' */
+    currency?: string;
+    value?: string;
+    estimated_value?: string;
+    computed_value?: string;
+    listed_value?: string;
+    offered_value?: string;
+    minimum_value?: string;
+    maximum_value?: string;
+};
 
 /** @description Describes a tag. This is a simple key-value store which is used to contain extended metadata */
 export type Tags = { [key: string]: string };

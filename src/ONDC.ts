@@ -1,5 +1,5 @@
-import { ONDCOptions, Context, Action } from "./types";
-import executeRequest from './init';
+import * as Types from "./types";
+import executeRequest from './util';
 import { v4 as uuidv4 } from 'uuid';
 
 export default class ONDC {
@@ -14,7 +14,7 @@ export default class ONDC {
     public country: string;
     public city: string;
     public domain?: string;
-    constructor(opts: ONDCOptions) {
+    constructor(opts: Types.ONDCOptions) {
         this.host = opts.host;
         this.apiKey = opts.apiKey || '<API Key>';
         this.bapId = opts.bapId;
@@ -28,77 +28,28 @@ export default class ONDC {
         this.key = opts.encryptionPublicKey;
     }
 
-    async init(): Promise<any> {
-        const options: any = this.getOptions();
-        const context: Context = this.getContext("init");
+    async init(order: Types.Order): Promise<any> {
+        const options: any = this.getOptions('init');
+        const context: Types.Context = this.getContext("init");
         const message = {
-            "order": {
-                "provider": {
-                    "id": "453678",
-                    "locations": [
-                        {
-                            "id": "el"
-                        }
-                    ]
-                },
-                "items": [
-                    {
-                        "id": "G-0007",
-                        "quantity": {
-                            "count": 1
-                        }
-                    },
-                    {
-                        "id": "G-0007-1",
-                        "quantity": {
-                            "count": 2
-                        }
-                    }
-                ],
-                "billing": {
-                    "name": "Nirmal",
-                    "phone": "9876543210",
-                    "address": {
-                        "door": "Landmark",
-                        "building": "Test Building",
-                        "street": "Test Address",
-                        "city": "Bengaluru",
-                        "state": "Karnataka",
-                        "country": "IND",
-                        "area_code": "560078"
-                    },
-                    "email": "customer@test.com"
-                },
-                "fulfillment": {
-                    "type": "HOME-DELIVERY",
-                    "tracking": true,
-                    "end": {
-                        "location": {
-                            "gps": "12.9063433,77.5856825",
-                            "address": {
-                                "door": "Landmark",
-                                "building": "Test Building",
-                                "street": "Test Address",
-                                "city": "Bengaluru",
-                                "state": "Karnataka",
-                                "country": "IND",
-                                "area_code": "560078"
-                            }
-                        },
-                        "contact": {
-                            "phone": "9876543210",
-                            "email": "customer@test.com"
-                        }
-                    }
-                }
-            }
+            "order": order
         }
         return (await executeRequest(options, context, message));
     }
-    getContext(action: string): Context {
+
+    async search(intent: Types.Intent): Promise<any> {
+        const options: any = this.getOptions('search');
+        const context: Types.Context = this.getContext("search");
+        const message = {
+            "intent" : intent
+        }
+        return (await executeRequest(options, context, message));
+    }
+
+    getContext(action: string): Types.Context {
         return {
             "domain": this.domain || "domain",
-            "action": action as Action,
+            "action": action as Types.Action,
             "country": this.country,
             "city": this.city,
             "core_version": "0.9.1",
@@ -113,10 +64,10 @@ export default class ONDC {
             "ttl": this.ttl,
         };
     }
-    getOptions(): any {
+    getOptions(path: string): any {
         return {
             'method': 'POST',
-            'url': `${this.host}/init`,
+            'url': `${this.host}/${path}`,
             'headers': {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
