@@ -902,6 +902,48 @@ export interface paths {
     };
 }
 
+export type onSelectMessage = {
+    message?: {
+        order: {
+            provider?: Provider;
+            provider_location?: Location;
+            items?: (Item & {
+                quantity?: ItemQuantity;
+            })[];
+            add_ons?: AddOn[];
+            offers?: Offer[];
+            quote?: Quotation;
+        }
+    }
+}
+
+export type onInitMessage = {
+    message?: {
+        order: {
+            provider?: {
+                id?: string;
+            };
+            provider_location?: {
+                id?: string;
+            };
+            items?: {
+                id?: string;
+                quantity?: ItemQuantitySub;
+            }[];
+            add_ons?: {
+                id?: string;
+            }[];
+            offers?: {
+                id?: string;
+            }[];
+            billing?: Billing;
+            fulfillment?: Fulfillment;
+            quote?: Quotation;
+            payment?: Payment;
+        };
+    };
+}
+
 export type ONDCOptions = {
     host: string,
     apiKey?: string,

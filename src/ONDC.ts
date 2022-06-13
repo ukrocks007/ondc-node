@@ -28,42 +28,239 @@ export default class ONDC {
         this.key = opts.encryptionPublicKey;
     }
 
-    async init(order: Types.Order): Promise<any> {
-        const options: any = this.getOptions('init');
-        const context: Types.Context = this.getContext("init");
-        const message = {
-            "order": order
-        }
-        return (await executeRequest(options, context, message));
-    }
-
-    async search(intent: Types.Intent): Promise<any> {
+    async search(intent: Types.Intent, ctxOpts?: any): Promise<any> {
         const options: any = this.getOptions('search');
-        const context: Types.Context = this.getContext("search");
+        const context: Types.Context = this.getContext("search", ctxOpts);
         const message = {
-            "intent" : intent
+            "intent": intent
         }
         return (await executeRequest(options, context, message));
     }
 
-    getContext(action: string): Types.Context {
+    async select(order: Types.Order, ctxOpts?: any): Promise<any> {
+        const options: any = this.getOptions('select');
+        const context: Types.Context = this.getContext("select", ctxOpts);
+        const message = {
+            order: order
+        }
+        return (await executeRequest(options, context, message));
+    }
+
+    async init(order: Types.Order, ctxOpts?: any): Promise<any> {
+        const options: any = this.getOptions('init');
+        const context: Types.Context = this.getContext("init", ctxOpts);
+        const message = {
+            order: order
+        }
+        return (await executeRequest(options, context, message));
+    }
+
+    async confirm(order: Types.Order, ctxOpts?: any): Promise<any> {
+        const options: any = this.getOptions('confirm');
+        const context: Types.Context = this.getContext("confirm", ctxOpts);
+        const message = {
+            order: order
+        }
+        return (await executeRequest(options, context, message));
+    }
+
+    async status(order_id: string, ctxOpts?: any): Promise<any> {
+        const options: any = this.getOptions('status');
+        const context: Types.Context = this.getContext("status", ctxOpts);
+        const message = {
+            order_id: order_id
+        }
+        return (await executeRequest(options, context, message));
+    }
+
+    async track(order_id: string, callback_url?: string, ctxOpts?: any): Promise<any> {
+        const options: any = this.getOptions('track');
+        const context: Types.Context = this.getContext("track", ctxOpts);
+        const message = {
+            order_id: order_id,
+            callback_url: callback_url,
+        }
+        return (await executeRequest(options, context, message));
+    }
+    
+    async cancel(order_id: string, cancellation_reason_id?: string, descriptor?: Types.Descriptor, ctxOpts?: any): Promise<any> {
+        const options: any = this.getOptions('cancel');
+        const context: Types.Context = this.getContext("cancel", ctxOpts);
+        const message = {
+            order_id: order_id,
+            cancellation_reason_id: cancellation_reason_id,
+            descriptor: descriptor,
+        }
+        return (await executeRequest(options, context, message));
+    }
+
+    async update(update_target: string, order: Types.Order, ctxOpts?: any): Promise<any> {
+        const options: any = this.getOptions('update');
+        const context: Types.Context = this.getContext("update", ctxOpts);
+        const message = {
+            update_target: update_target,
+            order: order,
+        }
+        return (await executeRequest(options, context, message));
+    }
+
+    async rating(rating: Types.Rating, ctxOpts?: any): Promise<any> {
+        const options: any = this.getOptions('rating');
+        const context: Types.Context = this.getContext("rating", ctxOpts);
+        const message = rating;
+        return (await executeRequest(options, context, message));
+    }
+
+    async support(ref_id?: string, ctxOpts?: any): Promise<any> {
+        const options: any = this.getOptions('support');
+        const context: Types.Context = this.getContext("support", ctxOpts);
+        const message = {
+            ref_id,
+        };
+        return (await executeRequest(options, context, message));
+    }
+
+    async on_search(catalog: Types.Catalog, ctxOpts?: any, error?: Error): Promise<any> {
+        const options: any = this.getOptions('on_search');
+        const context: Types.Context = this.getContext("on_search", ctxOpts);
+        const message = {
+            catalog
+        }
+        return (await executeRequest(options, context, message, error));
+    }
+
+    async on_select(message: Types.onSelectMessage, ctxOpts?: any, error?: Error): Promise<any> {
+        const options: any = this.getOptions('on_select');
+        const context: Types.Context = this.getContext("on_select", ctxOpts);
+        return (await executeRequest(options, context, message, error));
+    }
+
+    async on_init(message: Types.onInitMessage, ctxOpts?: any, error?: Error): Promise<any> {
+        const options: any = this.getOptions('on_init');
+        const context: Types.Context = this.getContext("on_init", ctxOpts);
+        return (await executeRequest(options, context, message, error));
+    }
+
+    async on_confirm(order: Types.Order, ctxOpts?: any, error?: Error): Promise<any> {
+        const options: any = this.getOptions('on_confirm');
+        const context: Types.Context = this.getContext("on_confirm", ctxOpts);
+        const message = {
+            order: order
+        }
+        return (await executeRequest(options, context, message, error));
+    }
+
+    async on_status(order: Types.Order, ctxOpts?: any, error?: Error): Promise<any> {
+        const options: any = this.getOptions('on_status');
+        const context: Types.Context = this.getContext("on_status", ctxOpts);
+        const message = {
+            order,
+        }
+        return (await executeRequest(options, context, message, error));
+    }
+
+    async on_track(tracking: Types.Tracking, ctxOpts?: any, error?: Error): Promise<any> {
+        const options: any = this.getOptions('on_track');
+        const context: Types.Context = this.getContext("on_track", ctxOpts);
+        const message = {
+            tracking,
+        }
+        return (await executeRequest(options, context, message, error));
+    }
+    
+    async on_cancel(order: Types.Order, ctxOpts?: any, error?: Error): Promise<any> {
+        const options: any = this.getOptions('on_cancel');
+        const context: Types.Context = this.getContext("on_cancel", ctxOpts);
+        const message = {
+            order,
+        }
+        return (await executeRequest(options, context, message, error));
+    }
+
+    async on_update(order: Types.Order, ctxOpts?: any, error?: Error): Promise<any> {
+        const options: any = this.getOptions('on_update');
+        const context: Types.Context = this.getContext("on_update", ctxOpts);
+        const message = {
+            order,
+        }
+        return (await executeRequest(options, context, message, error));
+    }
+
+    async on_rating(rankingAck: Types.RatingAck, ctxOpts?: any, error?: Error): Promise<any> {
+        const options: any = this.getOptions('on_rating');
+        const context: Types.Context = this.getContext("on_rating", ctxOpts);
+        const message = {
+            rankingAck,
+        }
+        return (await executeRequest(options, context, message, error));
+    }
+    
+    async on_support(phone?: string, email?: string, uri?: string, ctxOpts?: any, error?: Error): Promise<any> {
+        const options: any = this.getOptions('on_support');
+        const context: Types.Context = this.getContext("on_support", ctxOpts);
+        const message = {
+            phone,
+            email,
+            uri,
+        };
+        return (await executeRequest(options, context, message, error));
+    }
+
+    async get_cancellation_reasons(ctxOpts?: any): Promise<any> {
+        const options: any = this.getOptions('get_cancellation_reasons');
+        const context: Types.Context = this.getContext("get_cancellation_reasons", ctxOpts);
+        return (await executeRequest(options, context));
+    }
+
+    async cancellation_reasons(reasons?: Types.Option[], ctxOpts?: any): Promise<any> {
+        const options: any = this.getOptions('cancellation_reasons');
+        const context: Types.Context = this.getContext("cancellation_reasons", ctxOpts);
+        const message = {
+            cancellation_reasons: reasons
+        };
+        return (await executeRequest(options, context, message));
+    }
+
+    async get_return_reasons(ctxOpts?: any): Promise<any> {
+        const options: any = this.getOptions('get_return_reasons');
+        const context: Types.Context = this.getContext("get_return_reasons", ctxOpts);
+        return (await executeRequest(options, context));
+    }
+
+    async return_reasons(return_reasons?: Types.Option[], ctxOpts?: any): Promise<any> {
+        const options: any = this.getOptions('return_reasons');
+        const context: Types.Context = this.getContext("return_reasons", ctxOpts);
+        return (await executeRequest(options, context, undefined, undefined, {
+            context,
+            return_reasons,
+        }));
+    }
+
+    async get_rating_categories(ctxOpts?: any): Promise<any> {
+        const options: any = this.getOptions('get_rating_categories');
+        const context: Types.Context = this.getContext("get_rating_categories", ctxOpts);
+        return (await executeRequest(options, context));
+    }
+
+    getContext(action: string, ctxOpts?: any): Types.Context {
         return {
-            "domain": this.domain || "domain",
-            "action": action as Types.Action,
-            "country": this.country,
-            "city": this.city,
-            "core_version": "0.9.1",
-            "transaction_id": uuidv4(),
-            "message_id": uuidv4(),
-            "bap_id": this.bapId,
-            "bap_uri": this.bapUri,
-            "bpp_id": this.bppId,
-            "bpp_uri": this.bppUri,
+            "domain": ctxOpts.domain || this.domain || "domain",
+            "action": ctxOpts.action || action as Types.Action,
+            "country": ctxOpts.country || this.country,
+            "city": ctxOpts.city || this.city,
+            "core_version": ctxOpts.core_version || "0.9.1",
+            "transaction_id": ctxOpts.transactionId || uuidv4(),
+            "message_id": ctxOpts.messageId || uuidv4(),
+            "bap_id": ctxOpts.bapId || this.bapId,
+            "bap_uri": ctxOpts.bapUri || this.bapUri,
+            "bpp_id": ctxOpts.bppId || this.bppId,
+            "bpp_uri": ctxOpts.bppUri || this.bppUri,
             "timestamp": new Date().toISOString(),
-            "key": this.key,
-            "ttl": this.ttl,
+            "key": ctxOpts.key || this.key,
+            "ttl": ctxOpts.ttl || this.ttl,
         };
     }
+
     getOptions(path: string): any {
         return {
             'method': 'POST',
