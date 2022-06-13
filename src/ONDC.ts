@@ -242,7 +242,7 @@ export default class ONDC {
         return (await executeRequest(options, context));
     }
 
-    getContext(action: string, ctxOpts?: any): Types.Context {
+    getContext(action: string, ctxOpts: any = {}): Types.Context {
         return {
             "domain": ctxOpts.domain || this.domain || "domain",
             "action": ctxOpts.action || action as Types.Action,

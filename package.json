@@ -1,6 +1,6 @@
 {
   "name": "ondc-node",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "L1 layer for ONDC",
   "main": "index.js",
   "scripts": {
@@ -9,6 +9,9 @@
     "dev": "node --inspect=0.0.0.0 -r ts-node/register src/index.ts",
     "build": "tsc"
   },
+  "files": [
+      "dist"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ukrocks007/ondc-node.git"
