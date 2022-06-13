@@ -1,6 +1,6 @@
 {
   "name": "ondc-node",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "L1 layer for ONDC",
   "main": "index.js",
   "scripts": {
