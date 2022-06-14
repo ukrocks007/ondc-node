@@ -1,6 +1,6 @@
 {
   "name": "ondc-node",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "L1 layer for ONDC",
   "main": "index.js",
   "scripts": {
@@ -8,7 +8,8 @@
     "start": "node dist/index.js",
     "dev": "node --inspect=0.0.0.0 -r ts-node/register src/index.ts",
     "build": "rm -rf dist && tsc -p .",
-    "prepublish": "rm -rf dist && tsc -p ."
+    "prepublish": "rm -rf dist && tsc -p .",
+    "publish": "npm publish --access public"
   },
   "files": [
       "dist",
