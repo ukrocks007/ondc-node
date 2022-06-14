@@ -2,13 +2,15 @@
 
 This library can be used to integrate [ONDC](http://ondc.org/) in JavaScript based applications.
 
-# Introduction
+## Introduction
 
-## How to install?
+![LOGO](https://ondc.org/image/logo.png)
+
+### How to install?
 
 `npm i ondc-node --save`
 
-## Initialization
+### Initialization
 
 ```
 const ondc = require('ondc-node');
@@ -24,7 +26,7 @@ const instance = new ondc.ONDC({
 });
 ```
 
-## Search an Item
+### Search an Item
 
 ```
 const response = await instance.search({
@@ -43,7 +45,7 @@ const response = await instance.search({
     })
 ```
 
-# Functions Covered
+## Functions Covered
 
 - search
 - select
