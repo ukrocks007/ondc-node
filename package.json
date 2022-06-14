@@ -1,7 +1,7 @@
 {
   "name": "ondc-node",
-  "version": "1.0.9",
-  "description": "L1 layer for ONDC",
+  "version": "1.0.12",
+  "description": "Integrate ONDC in your JavaScript applications easily.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -9,7 +9,7 @@
     "dev": "node --inspect=0.0.0.0 -r ts-node/register src/index.ts",
     "build": "rm -rf dist && tsc -p .",
     "prepublish": "rm -rf dist && tsc -p .",
-    "publish": "npm publish --access public"
+    "publish-if-version-changed": "publish"
   },
   "files": [
       "dist",
@@ -33,6 +33,7 @@
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "request": "^2.88.2",
+    "publish": "^0.6.0",
     "ts-node": "^10.8.1",
     "typescript": "^4.7.3",
     "uuid": "^8.3.2"
