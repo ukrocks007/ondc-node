@@ -10,9 +10,11 @@ This library can be used to integrate [ONDC](http://ondc.org/) in JavaScript bas
 
 `npm i ondc-node --save`
 
+## 1. Using to call APIs
+
 ### Initialization
 
-```
+```JS
 const ondc = require('ondc-node');
 const instance = new ondc.ONDC({
     host: "http://localhost:5000",
@@ -28,7 +30,7 @@ const instance = new ondc.ONDC({
 
 ### Search an Item
 
-```
+```JS
 const response = await instance.search({
         "item": {
             "descriptor": {
@@ -43,6 +45,18 @@ const response = await instance.search({
             }
         }
     })
+```
+
+## 2. Using as Express Middleware
+
+```JS
+const ONDC = require('ondc-node');
+const express = require("express");
+
+const app = express();
+app.use(express.json());
+
+app.use(ONDC.Middleware({"on_search": onSearchHandler, "init": initHandler}));
 ```
 
 ## Functions Covered
