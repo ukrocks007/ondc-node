@@ -1,6 +1,6 @@
 {
   "name": "ondc-node",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Integrate ONDC in your JavaScript applications easily.",
   "main": "index.js",
   "scripts": {
@@ -20,7 +20,7 @@
     "url": "git+https://github.com/ukrocks007/ondc-node.git"
   },
   "keywords": [
-    "ONDC"
+    "ONDC", "ondc-node", "node.js", "integration", "ondc middleware" 
   ],
   "author": "Utkarsh Mehta <utkarsh.mehta2612@gmail.com>",
   "license": "ISC",

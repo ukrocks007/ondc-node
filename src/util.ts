@@ -5,7 +5,7 @@ async function executeRequest(opts: any, context: any, message?: any, error?: an
         "context": context,
         "message": message,
     };
-    if(error) {
+    if (error) {
         body["error"] = error;
     }
     return new Promise((resolve, reject) => {
@@ -16,7 +16,16 @@ async function executeRequest(opts: any, context: any, message?: any, error?: an
         };
         request(options, function (error: any, response: any) {
             if (error) reject(error);
-            resolve(JSON.parse(response.body));
+            if (response) {
+                if (response.body) {
+                    try {
+                        resolve(JSON.parse(response.body));
+                    } catch (ex) {
+                        reject("Invalid json in response body");
+                    }
+                }
+            }
+            reject("Invalid response or body");
         });
     });
 }
