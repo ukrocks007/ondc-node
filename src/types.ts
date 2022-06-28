@@ -945,17 +945,28 @@ export type onInitMessage = {
 }
 
 export type ONDCOptions = {
-    host: string,
-    apiKey?: string,
-    bapId: string,
-    bapUri: string,
-    bppId: string,
-    bppUri: string,
-    encryptionPublicKey?: string,
-    ttl?: string,
-    country: string,
-    city: string,
-    domain?: string,
+    host: string;
+    apiKey?: string;
+    bapId: string;
+    bapUri: string;
+    bppId: string;
+    bppUri: string;
+    encryptionPublicKey?: string;
+    ttl?: string;
+    country: string;
+    city: string;
+    domain?: string;
+    privateKey?: string;
+    uniqueKey?: string;
+    subscriberId?: string;
+}
+
+export type SubscriberDetail = {
+    subscriber_id: string;
+    subscriber_url: string;
+    type: string;
+    signing_public_key: string;
+    valid_until: string;
 }
 
 export type Contact = {

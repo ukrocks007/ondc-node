@@ -1,10 +1,12 @@
 import * as Types from "./types";
 import executeRequest from './util';
 import { v4 as uuidv4 } from 'uuid';
+import _sodium, { base64_variants } from "libsodium-wrappers";
 
 export default class ONDC {
     public host: string;
     public apiKey: string;
+    public privateKey: string;
     public bapId: string;
     public bapUri: string;
     public bppId: string;
@@ -14,6 +16,8 @@ export default class ONDC {
     public country: string;
     public city: string;
     public domain?: string;
+    public uniqueKey: string;
+    public subscriberId: string;
     constructor(opts: Types.ONDCOptions) {
         this.host = opts.host;
         this.apiKey = opts.apiKey || '<API Key>';
@@ -26,6 +30,9 @@ export default class ONDC {
         this.city = opts.city;
         this.domain = opts.domain;
         this.key = opts.encryptionPublicKey;
+        this.privateKey = opts.privateKey || "";
+        this.uniqueKey = opts.uniqueKey || uuidv4();
+        this.subscriberId = opts.subscriberId || "";
     }
 
     async search(intent: Types.Intent, ctxOpts?: any): Promise<any> {
@@ -82,7 +89,7 @@ export default class ONDC {
         }
         return (await executeRequest(options, context, message));
     }
-    
+
     async cancel(order_id: string, cancellation_reason_id?: string, descriptor?: Types.Descriptor, ctxOpts?: any): Promise<any> {
         const options: any = this.getOptions('cancel');
         const context: Types.Context = this.getContext("cancel", ctxOpts);
@@ -167,7 +174,7 @@ export default class ONDC {
         }
         return (await executeRequest(options, context, message, error));
     }
-    
+
     async on_cancel(order: Types.Order, ctxOpts?: any, error?: Error): Promise<any> {
         const options: any = this.getOptions('on_cancel');
         const context: Types.Context = this.getContext("on_cancel", ctxOpts);
@@ -194,7 +201,7 @@ export default class ONDC {
         }
         return (await executeRequest(options, context, message, error));
     }
-    
+
     async on_support(phone?: string, email?: string, uri?: string, ctxOpts?: any, error?: Error): Promise<any> {
         const options: any = this.getOptions('on_support');
         const context: Types.Context = this.getContext("on_support", ctxOpts);
@@ -271,5 +278,85 @@ export default class ONDC {
                 'Authorization': this.apiKey
             },
         };
+    }
+
+    async createAuthorizationHeader(message: any) {
+        const { signing_string, expires, created } = await this.createSigningString(JSON.stringify(message));
+        const signature = await this.signMessage(signing_string, this.privateKey || "");
+        const subscriber_id = this.subscriberId;
+        const header = `Signature keyId="${subscriber_id}|${this.uniqueKey}|ed25519",algorithm="ed25519",created="${created}",expires="${expires}",headers="(created) (expires) digest",signature="${signature}"`
+        return header;
+    }
+
+    async createSigningString(message: string, created?: string, expires?: string) {
+        //if (!created) created = Math.floor(new Date().getTime() / 1000).toString();
+        if (!created) created = Math.floor(new Date().getTime() / 1000 - (1 * 60)).toString(); //TO USE IN CASE OF TIME ISSUE
+        if (!expires) expires = (parseInt(created) + (1 * 60 * 60)).toString(); //Add required time to create expired
+        //const digest = createBlakeHash('blake512').update(JSON.stringify(message)).digest("base64");
+        //const digest = blake2.createHash('blake2b', { digestLength: 64 }).update(Buffer.from(message)).digest("base64");
+        await _sodium.ready;
+        const sodium = _sodium;
+        const digest = sodium.crypto_generichash(64, sodium.from_string(message));
+        const digest_base64 = sodium.to_base64(digest, base64_variants.ORIGINAL);
+        const signing_string =
+            `(created): ${created}
+    (expires): ${expires}
+    digest: BLAKE-512=${digest_base64}`
+        console.log(signing_string);
+        return { signing_string, expires, created }
+    }
+
+    async signMessage(signing_string: string, privateKey: string) {
+        await _sodium.ready;
+        const sodium = _sodium;
+        const signedMessage = sodium.crypto_sign_detached(signing_string, sodium.from_base64(privateKey, base64_variants.ORIGINAL));
+        return sodium.to_base64(signedMessage, base64_variants.ORIGINAL);
+    }
+
+    async verifyHeader (header: string, subscriber_details: Types.SubscriberDetail, rawBody: any) {
+        try {
+            const parts = this.split_auth_header(header);
+            if (!parts || Object.keys(parts).length === 0) {
+                throw (new Error("Header parsing failed"));
+            }
+            
+            const public_key = subscriber_details.signing_public_key;
+            const { signing_string } = await this.createSigningString(rawBody, parts['created'], parts['expires']);
+            const verified = await this.verifyMessage(parts['signature'], signing_string, public_key);
+            return verified;
+        } catch (error) {
+            console.log(error)
+            return false;
+        }
+    }
+
+    async verifyMessage (signedString: string, signingString: string, publicKey: string) {
+        try {
+            await _sodium.ready;
+            const sodium = _sodium;
+            return sodium.crypto_sign_verify_detached(sodium.from_base64(signedString, base64_variants.ORIGINAL), signingString, sodium.from_base64(publicKey, base64_variants.ORIGINAL));
+        } catch (error) {
+            return false
+        }
+    }
+
+    split_auth_header (auth_header: string) {
+        const header = auth_header.replace('Signature ', '');
+        let re = /\s*([^=]+)=([^,]+)[,]?/g;
+        let m;
+        let parts: any = {}
+        while ((m = re.exec(header)) !== null) {
+            if (m) {
+                parts[m[1]] = this.remove_quotes(m[2]);
+            }
+        }
+        return parts;
+    }
+
+    remove_quotes (value: string) {
+        if (value.length >= 2 && value.charAt(0) == '"' && value.charAt(value.length - 1) == '"') {
+            value = value.substring(1, value.length - 1)
+        }
+        return value;
     }
 }
