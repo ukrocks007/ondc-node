@@ -951,7 +951,7 @@ export type ONDCOptions = {
     bapUri: string;
     bppId: string;
     bppUri: string;
-    encryptionPublicKey?: string;
+    publicKey?: string;
     ttl?: string;
     country: string;
     city: string;
