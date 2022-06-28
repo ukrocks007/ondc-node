@@ -67,7 +67,7 @@ app.use(ONDC.Middleware({"on_search": onSearchHandler, "init": initHandler}));
 
 ## 🤩 Effortless Authorization 🔐 with ONDC
 
-You can use functions ```ondc.createAuthorizationHeader``` function to ```Authorization``` header.
+You can use ```ondc.createAuthorizationHeader``` function to create ```Authorization``` header signature.
 
 ```JS
     const ondc = require('ondc-node');
