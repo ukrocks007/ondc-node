@@ -18,6 +18,7 @@ export default class ONDC {
     public domain?: string;
     public uniqueKey: string;
     public subscriberId: string;
+    public signingPublicKey?: string;
     constructor(opts: Types.ONDCOptions) {
         this.host = opts.host;
         this.apiKey = opts.apiKey || '<API Key>';
@@ -29,7 +30,8 @@ export default class ONDC {
         this.country = opts.country;
         this.city = opts.city;
         this.domain = opts.domain;
-        this.key = opts.publicKey;
+        this.key = opts.encryptionPublicKey;
+        this.signingPublicKey = opts.signingPublicKey;
         this.privateKey = opts.privateKey || "";
         this.uniqueKey = opts.uniqueKey || uuidv4();
         this.subscriberId = opts.subscriberId || "";
