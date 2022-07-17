@@ -102,7 +102,7 @@ You can use ```ondc.createAuthorizationHeader``` function to create ```Authoriza
         }
     };
     // apiKey is sent in Authorization Header
-    ondc.apiKey = await ondc.createAuthorizationHeader(body);
+    ondc.apiKey = await instance.createAuthorizationHeader(body);
     const response = await instance.search(body)
 ```
 
