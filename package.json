@@ -1,6 +1,6 @@
 {
   "name": "ondc-node",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "Integrate ONDC in your JavaScript applications easily.",
   "main": "index.js",
   "scripts": {
